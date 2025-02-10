@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: white; color: black; overflow: hidden; display: flex; align-items: left; justify-content: left; height: 100vh; }
+        .wrapper {
+			height: 100px;
+			overflow: hidden;
+			display: flex;
+			align-items: flex-start;
+		}
+        .marquee { 
+            display: flex; 
+            flex-direction: column; 
+            animation: scrollUp 6s linear infinite;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            text-align: left; /* Align to left */
+            padding-left: 2px; /* Space for the symbol */
+        }
+        .marquee div {
+            position: relative;
+            padding-left: 20px; /* Space between the symbol and the text */
+			margin-bottom: 5px; /* Add space between menu items */
+        }
+        .marquee div::before {
+            content: "🔸"; /* Bullet symbol */
+            position: absolute;
+            left: 0;
+            top: 40%;
+            transform: translateY(-50%);
+        }
+        @keyframes scrollUp { 
+            from { transform: translateY(100%); } 
+            to { transform: translateY(-100%); } 
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="marquee" id="menu"></div>
+    </div>
+
+    <script>
+        const menus = {
+            "Monday": ["Tarhana Çorbası", "Kuru Fasulye", "Bulgur Pilavı", "Turşu"],
+            "Tuesday": ["Düğün Çorba", "Patates Oturtma", "Yoğurtlu Makarna", "Vişne Komposto"],
+            "Wednesday": ["Köylü  Çorbası", "Sebzeli Tavuk ", "Pirinç Pilavı", "Salata"],
+            "Thursday": ["Domates Çorbası", "Fırında Karnabahar", "Kavurma Makarna", "Yoğurt"],
+            "Friday": ["Mercimek Çorbası", "KöfteX2/Patates Kızartma", "Pirinç Pilavı", "Cacık"]
+        };
+
+        const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+        const menuDiv = document.getElementById("menu");
+
+        if (menus[today]) {
+            menuDiv.innerHTML = menus[today].map(item => `<div>${item}</div>`).join("");
+        } else {
+            menuDiv.innerHTML = "<div>No menu available</div>";
+        }
+    </script>
+</body>
+</html>
