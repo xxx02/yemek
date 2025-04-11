@@ -1,41 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: white; color: black; overflow: hidden; display: flex; align-items: left; justify-content: left; height: 100vh; }
+        body {
+            background: white;
+            color: black;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start; /* düzeltildi */
+            justify-content: flex-start; /* düzeltildi */
+            height: 100vh;
+        }
         .wrapper {
-			height: 100px;
-			overflow: hidden;
-			display: flex;
-			align-items: flex-start;
-		}
-        .marquee { 
-            display: flex; 
-            flex-direction: column; 
-            animation: scrollUp 6s linear infinite;
+            height: 100px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start;
+        }
+        .marquee {
+            display: flex;
+            flex-direction: column;
+            animation: scrollUp 12s linear infinite; /* animasyon yavaşlatıldı */
             font-family: Arial, sans-serif;
             font-size: 20px;
-            text-align: left; /* Align to left */
-            padding-left: 2px; /* Space for the symbol */
+            text-align: left;
+            padding-left: 2px;
         }
         .marquee div {
             position: relative;
-            padding-left: 20px; /* Space between the symbol and the text */
-			margin-bottom: 5px; /* Add space between menu items */
+            padding-left: 20px;
+            margin-bottom: 5px;
         }
         .marquee div::before {
-            content: "🔸"; /* Bullet symbol */
+            content: "🔸";
             position: absolute;
             left: 0;
             top: 40%;
             transform: translateY(-50%);
         }
-        @keyframes scrollUp { 
-            from { transform: translateY(100%); } 
-            to { transform: translateY(-100%); } 
+
+        /* Mobil uyum için font boyutu küçültüldü */
+        @media (max-width: 600px) {
+            .marquee {
+                font-size: 16px;
+            }
+        }
+
+        @keyframes scrollUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(-100%); }
         }
     </style>
 </head>
@@ -54,12 +70,14 @@
         };
 
         const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+        const todayTr = new Date().toLocaleDateString("tr-TR", { weekday: "long" }); // Türkçe gün adı
         const menuDiv = document.getElementById("menu");
 
         if (menus[today]) {
-            menuDiv.innerHTML = menus[today].map(item => `<div>${item}</div>`).join("");
+            menuDiv.innerHTML = `<div style="font-weight: bold; margin-bottom: 10px;">${todayTr} Menüsü</div>` +
+                menus[today].map(item => `<div>${item}</div>`).join("");
         } else {
-            menuDiv.innerHTML = "<div>No menu available</div>";
+            menuDiv.innerHTML = "<div>Bugün için menü bulunmamaktadır</div>";
         }
     </script>
 </body>
