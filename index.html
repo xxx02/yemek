@@ -10,20 +10,17 @@
             color: black;
             overflow: hidden;
             display: flex;
-            align-items: flex-start; /* düzeltildi */
-            justify-content: flex-start; /* düzeltildi */
+            align-items: flex-start;
+            justify-content: flex-start;
             height: 100vh;
         }
         .wrapper {
-            height: 100px;
-            overflow: hidden;
-            display: flex;
-            align-items: flex-start;
+            height: auto; /* Kayma yoksa otomatik yüksekliğe izin verelim */
+            padding: 20px;
         }
         .marquee {
             display: flex;
             flex-direction: column;
-            animation: scrollUp 12s linear infinite; /* animasyon yavaşlatıldı */
             font-family: Arial, sans-serif;
             font-size: 20px;
             text-align: left;
@@ -42,16 +39,10 @@
             transform: translateY(-50%);
         }
 
-        /* Mobil uyum için font boyutu küçültüldü */
         @media (max-width: 600px) {
             .marquee {
                 font-size: 16px;
             }
-        }
-
-        @keyframes scrollUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(-100%); }
         }
     </style>
 </head>
@@ -70,7 +61,7 @@
         };
 
         const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
-        const todayTr = new Date().toLocaleDateString("tr-TR", { weekday: "long" }); // Türkçe gün adı
+        const todayTr = new Date().toLocaleDateString("tr-TR", { weekday: "long" });
         const menuDiv = document.getElementById("menu");
 
         if (menus[today]) {
