@@ -16,15 +16,15 @@
         }
         .wrapper {
             height: auto; /* Kayma yoksa otomatik yüksekliğe izin verelim */
-            padding: 20px;
+            padding: 5px;
         }
         .marquee {
             display: flex;
             flex-direction: column;
             font-family: Arial, sans-serif;
-            font-size: 20px;
+            font-size: 18px;
             text-align: left;
-            padding-left: 2px;
+            padding-left: 0px;
         }
         .marquee div {
             position: relative;
@@ -65,7 +65,7 @@
         const menuDiv = document.getElementById("menu");
 
         if (menus[today]) {
-            menuDiv.innerHTML = `<div style="font-weight: bold; margin-bottom: 10px;">${todayTr} Menüsü</div>` +
+            menuDiv.innerHTML = `<h style="font-weight: bold; margin-bottom: 5px; margin-left: 8px">${todayTr} Menüsü</h>` +
                 menus[today].map(item => `<div>${item}</div>`).join("");
         } else {
             menuDiv.innerHTML = "<div>Bugün için menü bulunmamaktadır</div>";
