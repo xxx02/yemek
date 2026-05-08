@@ -5,121 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Günlük Yemek Menüsü</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #f8f9fa;
+            background: #fdfdfd;
             color: #333;
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+            align-items: flex-start;
+            justify-content: flex-start;
+            height: 100vh;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
         }
-        
-        .menu-card {
-            background: white;
+        .wrapper {
             width: 100%;
-            max-width: 420px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            padding: 32px 28px;
+            padding: 0px;
         }
-        
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            font-size: 18px;
+            text-align: left;
+        }
         .menu-title {
-            color: #d35400;
-            font-size: 1.35rem;
-            font-weight: 700;
-            margin-bottom: 4px;
+            color: #d35400; /* Hafif turuncu başlık rengi */
+            margin-bottom: 2px;
+            margin-left: 5px;
+            font-size: 1.2em;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 2px;
+            display: inline-block;
         }
-        
-        .menu-date {
-            color: #888;
-            font-size: 0.95rem;
-            margin-bottom: 24px;
-        }
-        
         .menu-item {
             position: relative;
-            padding-left: 28px;
-            margin-bottom: 10px;
-            font-size: 1.05rem;
-            line-height: 1.5;
+            padding-left: 25px;
+            margin-bottom: 2px;
+            line-height: 1.4;
             font-weight: 500;
         }
-        
         .menu-item::before {
             content: "🔸";
             position: absolute;
             left: 0;
-            top: 2px;
-            font-size: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8em;
         }
-        
         .no-menu {
             color: #7f8c8d;
             font-style: italic;
-            padding: 12px 0;
+            padding: 10px;
         }
-        
-        @media (max-width: 480px) {
-            .menu-card {
-                padding: 24px 20px;
-            }
-            .menu-title {
-                font-size: 1.2rem;
-            }
+
+        @media (max-width: 600px) {
+            .menu-container { font-size: 16px; }
         }
     </style>
 </head>
 <body>
-    <div class="menu-card">
-        <div id="menu"></div>
+    <div class="wrapper">
+        <div class="menu-container" id="menu"></div>
     </div>
 
     <script>
         const menus = {
             "Monday": ["Telşehriye Çorbası", "Kuru Fasulye", "Pirinç Pilavı", "Cacık"],
             "Tuesday": ["Tarhana Çorbası", "Sebzeli Tavuk", "Bulgur Pilavı", "Ayran"],
-            "Wednesday": ["Köylü Çorba", "Tavuk Döner", "Pirinç Pilavı", "Salata / Ayran"],
+            "Wednesday": ["Köylü Çorba", "Tavuk Döner", "Pirinç Pilavı", "Salata/Ayran"],
             "Thursday": ["Tavuksuyu Çorba", "Patates Oturtma", "Kavurma Makarna", "Vişne Komposto"],
             "Friday": ["Mercimek Çorbası", "Orman Kebabı", "Pirinç Pilavı", "Ayran"]
         };
-
+        
+        // Tarayıcı dilinden bağımsız olarak İngilizce gün ismini al (Veri eşleşmesi için)
         const todayKey = new Date().toLocaleDateString("en-US", { weekday: "long" });
+        // Ekrana yazdırmak için Türkçe gün ismini al
         const todayTr = new Date().toLocaleDateString("tr-TR", { weekday: "long" });
-        const dateStr = new Date().toLocaleDateString("tr-TR", { 
-            day: "numeric", 
-            month: "long", 
-            year: "numeric" 
-        });
-
+        
         const menuDiv = document.getElementById("menu");
 
         if (menus[todayKey]) {
-            const listItems = menus[todayKey]
-                .map(item => `<div class="menu-item">${item}</div>`)
-                .join("");
-
+            const listItems = menus[todayKey].map(item => `<div class="menu-item">${item}</div>`).join("");
+            
             menuDiv.innerHTML = `
                 <h3 class="menu-title">${todayTr} Menüsü</h3>
-                <div class="menu-date">${dateStr}</div>
                 ${listItems}
             `;
         } else {
             menuDiv.innerHTML = `
                 <h3 class="menu-title">${todayTr}</h3>
-                <div class="menu-date">${dateStr}</div>
                 <div class="no-menu">Bugün yemek servisi bulunmamaktadır.</div>
             `;
         }
     </script>
 </body>
 </html>
+
+
+
+
+
+
