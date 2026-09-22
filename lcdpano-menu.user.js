@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         LCDPano Sabit Yemek Menüsü
 // @namespace    https://yemekliste.netlify.app/
-// @version      1.0.0
-// @description  LCDPano Özel Modül içindeki yemek menüsünü animasyonlu/flip kapsayıcısından çıkarıp ekranda sabitler.
+// @version      1.1.0
+// @description  Yemek menüsü aktifken onu LCDPano animasyonundan ayırıp sabit gösterir; başka modüle geçildiğinde otomatik gizler.
 // @match        https://app.lcdpano.net/*
 // @run-at       document-idle
 // @grant        none
@@ -57,7 +57,6 @@
     }
 
     img[${ANCHOR_ATTR}="1"] {
-      visibility: hidden !important;
       opacity: 0 !important;
     }
   `;
@@ -88,10 +87,12 @@
   }
 
   function findAnchor() {
-    return [...document.images].find(img => {
+    const candidates = [...document.images].filter(img => {
       const src = img.currentSrc || img.src || '';
       return src.includes('yemekliste.netlify.app/menu.svg');
-    }) || null;
+    });
+
+    return candidates.find(img => isAnchorActive(img)) || null;
   }
 
   function validRect(rect) {
@@ -105,6 +106,39 @@
       rect.left < window.innerWidth &&
       rect.top < window.innerHeight
     );
+  }
+
+  function isAnchorActive(img) {
+    if (!img || !img.isConnected) return false;
+
+    const rect = img.getBoundingClientRect();
+    if (!validRect(rect)) return false;
+
+    let el = img.parentElement;
+    while (el && el !== document.documentElement) {
+      const cs = getComputedStyle(el);
+      if (
+        cs.display === 'none' ||
+        cs.visibility === 'hidden' ||
+        parseFloat(cs.opacity || '1') < 0.05
+      ) {
+        return false;
+      }
+      el = el.parentElement;
+    }
+
+    const x = Math.min(window.innerWidth - 1, Math.max(0, rect.left + rect.width / 2));
+    const y = Math.min(window.innerHeight - 1, Math.max(0, rect.top + rect.height / 2));
+    const top = document.elementFromPoint(x, y);
+
+    if (!top) return false;
+
+    const face = img.closest('.face, .front, .back, [class*="slide"], [class*="carousel"]');
+    if (face) {
+      return top === face || face.contains(top);
+    }
+
+    return top === img || top.contains(img) || img.contains(top);
   }
 
   function nearlyEqual(a, b, tolerance = 1.5) {
@@ -161,10 +195,12 @@
       overlayImage.src = nextSrc;
       currentDayKey = dayKey;
       applyRect();
-      overlay.style.display = 'block';
 
-      if (anchor && anchor.isConnected) {
+      if (anchor && isAnchorActive(anchor)) {
         anchor.setAttribute(ANCHOR_ATTR, '1');
+        overlay.style.display = 'block';
+      } else {
+        overlay.style.display = 'none';
       }
     };
 
@@ -235,7 +271,17 @@
     }
 
     const found = findAnchor();
-    if (!found) return;
+
+    if (!found) {
+      if (overlay) overlay.style.display = 'none';
+
+      if (anchor && anchor.isConnected) {
+        anchor.removeAttribute(ANCHOR_ATTR);
+      }
+
+      anchor = null;
+      return;
+    }
 
     if (anchor !== found) {
       if (anchor && anchor.isConnected) {
@@ -247,9 +293,16 @@
     }
 
     // LCDPano aynı resmi DOM'da yeniden oluşturursa orijinali tekrar gizle.
-    if (rectRatio && anchor.isConnected) {
+    if (rectRatio && anchor.isConnected && isAnchorActive(anchor)) {
       anchor.setAttribute(ANCHOR_ATTR, '1');
+      applyRect();
       refreshMenu(false);
+
+      if (overlayImage && overlayImage.src) {
+        overlay.style.display = 'block';
+      }
+    } else if (overlay) {
+      overlay.style.display = 'none';
     }
   }
 
@@ -277,9 +330,14 @@
     }
   });
 
-  // Gün değişimini ve SPA içindeki yeniden çizimleri düşük maliyetle kontrol et.
+  // LCDPano'nun slayt/menü rotasyonunu takip et.
+  // Yemek modülü ekrandan çıktığında overlay gizlenir; geri geldiğinde yeniden görünür.
   setInterval(() => {
     attach();
+  }, 150);
+
+  // Gün değişimini ayrıca düşük maliyetle kontrol et.
+  setInterval(() => {
     refreshMenu(false);
   }, 30 * 1000);
 
