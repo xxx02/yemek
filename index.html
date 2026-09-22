@@ -3,106 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
     <title>Günlük Yemek Menüsü</title>
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
         body {
+            width: 100%;
+            min-height: 100%;
             background: #fdfdfd;
+        }
+
+        body {
             color: #333;
             overflow: hidden;
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-start;
-            height: 100vh;
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
         }
+
+        /* İlk JS çizimi tamamlanmadan eski/ara içeriğin görünmesini engeller. */
+        #app {
+            visibility: hidden;
+        }
+
+        body.ready #app {
+            visibility: visible;
+        }
+
         .wrapper {
             width: 100%;
-            padding: 0px;
+            min-height: 100%;
         }
+
         .menu-container {
             display: flex;
             flex-direction: column;
+            width: 100%;
             font-size: 18px;
             text-align: left;
         }
+
         .menu-title {
-            color: #d35400; /* Hafif turuncu başlık rengi */
-            margin-bottom: 2px;
-            margin-left: 5px;
+            color: #d35400;
+            margin: 0 0 3px 5px;
+            padding-bottom: 3px;
             font-size: 1.2em;
+            font-weight: 700;
+            line-height: 1.25;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             border-bottom: 2px solid #eee;
-            padding-bottom: 2px;
-            display: inline-block;
         }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+        }
+
         .menu-item {
             position: relative;
+            min-height: 25px;
             padding-left: 25px;
             margin-bottom: 2px;
             line-height: 1.4;
             font-weight: 500;
         }
+
+        /* Emoji yerine saf CSS işareti: ekstra font yüklemez, çizimde sıçrama yapmaz. */
         .menu-item::before {
-            content: "🔸";
+            content: "";
             position: absolute;
-            left: 0;
+            left: 7px;
             top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.8em;
+            width: 7px;
+            height: 7px;
+            background: #d35400;
+            transform: translateY(-50%) rotate(45deg);
         }
+
         .no-menu {
             color: #7f8c8d;
             font-style: italic;
-            padding: 10px;
+            padding: 8px 10px;
+            line-height: 1.4;
         }
 
         @media (max-width: 600px) {
-            .menu-container { font-size: 16px; }
+            .menu-container {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="wrapper">
-        <div class="menu-container" id="menu"></div>
-    </div>
+    <main class="wrapper" id="app">
+        <section class="menu-container" aria-label="Günlük yemek menüsü">
+            <h3 class="menu-title" id="menu-title">Günün Menüsü</h3>
+            <div class="menu-list" id="menu-list" aria-live="polite"></div>
+        </section>
+    </main>
 
     <script>
+        /*
+         * Ali Öztaylan Anadolu İmam Hatip Lisesi
+         * Eylül 2026 menü planı
+         *
+         * Menü haftanın gününe göre değil, gerçek tarihe göre seçilir.
+         * Böylece her pazartesi aynı yemeğin görünmesi gibi bir sorun oluşmaz.
+         */
         const menus = {
-            "Monday": ["Telşehriye Çorbası", "Kuru Fasulye", "Pirinç Pilavı", "Cacık"],
-            "Tuesday": ["Tarhana Çorbası", "Sebzeli Tavuk", "Bulgur Pilavı", "Ayran"],
-            "Wednesday": ["Köylü Çorba", "Tavuk Döner", "Pirinç Pilavı", "Salata/Ayran"],
-            "Thursday": ["Tavuksuyu Çorba", "Patates Oturtma", "Kavurma Makarna", "Vişne Komposto"],
-            "Friday": ["Mercimek Çorbası", "Orman Kebabı", "Pirinç Pilavı", "Ayran"]
+            "2026-09-21": [
+                "Et Döner / Patates",
+                "Pirinç Pilavı",
+                "Ayran"
+            ],
+            "2026-09-22": [
+                "Etli Çorba",
+                "Taze Fasulye",
+                "Mantı"
+            ],
+            "2026-09-23": [
+                "Püreli Misket Köfte",
+                "Bulgur Pilavı",
+                "Komposto"
+            ],
+            "2026-09-24": [
+                "Kuru Fasulye",
+                "Tavuklu Pirinç Pilavı",
+                "Ayran"
+            ],
+            "2026-09-25": [
+                "Piliç Külbastı",
+                "Mac and Cheese",
+                "Mevsim Meyve"
+            ],
+            "2026-09-28": [
+                "Piliç Baget Fırın",
+                "Tel Şehriyeli Pirinç Pilavı",
+                "Ayran"
+            ],
+            "2026-09-29": [
+                "Domates Çorba",
+                "Çiftlik Kebabı",
+                "Bulgur Pilavı"
+            ],
+            "2026-09-30": [
+                "Ev Usulü Mercimek Çorba",
+                "Biber Dolma",
+                "Gül Börek"
+            ]
         };
-        
-        // Tarayıcı dilinden bağımsız olarak İngilizce gün ismini al (Veri eşleşmesi için)
-        const todayKey = new Date().toLocaleDateString("en-US", { weekday: "long" });
-        // Ekrana yazdırmak için Türkçe gün ismini al
-        const todayTr = new Date().toLocaleDateString("tr-TR", { weekday: "long" });
-        
-        const menuDiv = document.getElementById("menu");
 
-        if (menus[todayKey]) {
-            const listItems = menus[todayKey].map(item => `<div class="menu-item">${item}</div>`).join("");
-            
-            menuDiv.innerHTML = `
-                <h3 class="menu-title">${todayTr} Menüsü</h3>
-                ${listItems}
-            `;
-        } else {
-            menuDiv.innerHTML = `
-                <h3 class="menu-title">${todayTr}</h3>
-                <div class="no-menu">Bugün yemek servisi bulunmamaktadır.</div>
-            `;
+        const TIME_ZONE = "Europe/Istanbul";
+
+        const menuTitle = document.getElementById("menu-title");
+        const menuList = document.getElementById("menu-list");
+
+        const datePartsFormatter = new Intl.DateTimeFormat("tr-TR", {
+            timeZone: TIME_ZONE,
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        });
+
+        const titleFormatter = new Intl.DateTimeFormat("tr-TR", {
+            timeZone: TIME_ZONE,
+            day: "numeric",
+            month: "long",
+            weekday: "long"
+        });
+
+        let renderedDateKey = "";
+
+        function getTurkeyDateInfo(now = new Date()) {
+            const parts = datePartsFormatter.formatToParts(now);
+            const values = {};
+
+            for (const part of parts) {
+                if (part.type !== "literal") {
+                    values[part.type] = part.value;
+                }
+            }
+
+            return {
+                key: `${values.year}-${values.month}-${values.day}`,
+                label: titleFormatter.format(now)
+            };
         }
+
+        function renderMenu(force = false) {
+            const today = getTurkeyDateInfo();
+
+            /* Aynı gün içinde DOM'a gereksiz yere tekrar dokunma. */
+            if (!force && today.key === renderedDateKey) {
+                return;
+            }
+
+            renderedDateKey = today.key;
+
+            const dailyMenu = menus[today.key];
+
+            menuTitle.textContent = `${today.label} Menüsü`;
+            menuList.replaceChildren();
+
+            if (!dailyMenu) {
+                const empty = document.createElement("div");
+                empty.className = "no-menu";
+                empty.textContent = "Bugün yemek servisi bulunmamaktadır.";
+                menuList.appendChild(empty);
+            } else {
+                const fragment = document.createDocumentFragment();
+
+                for (const food of dailyMenu) {
+                    const item = document.createElement("div");
+                    item.className = "menu-item";
+                    item.textContent = food;
+                    fragment.appendChild(item);
+                }
+
+                menuList.appendChild(fragment);
+            }
+
+            document.body.classList.add("ready");
+        }
+
+        /* İlk açılış. */
+        renderMenu(true);
+
+        /*
+         * Sayfa reload edilmez.
+         * Yalnızca tarih kontrol edilir; gece yarısından sonra menü otomatik değişir.
+         */
+        setInterval(() => renderMenu(false), 30 * 1000);
+
+        /*
+         * LCDPano sekmeyi/iframe'i bir süre görünmez yaparsa geri geldiğinde
+         * tarih yeniden doğrulanır.
+         */
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) {
+                renderMenu(true);
+            }
+        });
+
+        window.addEventListener("pageshow", () => {
+            renderMenu(true);
+        });
     </script>
 </body>
 </html>
-
-
-
-
-
-
