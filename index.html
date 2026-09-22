@@ -25,16 +25,6 @@
             overflow: hidden;
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
         }
-
-        /* İlk JS çizimi tamamlanmadan eski/ara içeriğin görünmesini engeller. */
-        #app {
-            visibility: hidden;
-        }
-
-        body.ready #app {
-            visibility: visible;
-        }
-
         .wrapper {
             width: 100%;
             min-height: 100%;
@@ -229,8 +219,6 @@
 
                 menuList.appendChild(fragment);
             }
-
-            document.body.classList.add("ready");
         }
 
         /* İlk açılış. */
