@@ -73,13 +73,13 @@ exports.handler = async function () {
   const xText = 30;
   const contentWidth = 320;
 
-  let y = 38;
+  let y = 58;
   let content = '';
 
   if (menu && menu.length) {
     for (const item of menu) {
       const lines = wrapText(item, 28);
-      const bulletY = y + 6;
+      const bulletY = y - 10;
       content += `<rect x="${xBullet}" y="${bulletY}" width="7" height="7" rx="1" transform="rotate(45 ${xBullet + 3.5} ${bulletY + 3.5})" fill="#d35400" />`;
       lines.forEach((line, idx) => {
         content += `<text x="${xText}" y="${y + idx * 18}" font-size="18" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" fill="#333" font-weight="500">${escapeXml(line)}</text>`;
@@ -98,7 +98,7 @@ exports.handler = async function () {
   <desc id="desc">Ali Öztaylan Anadolu İmam Hatip Lisesi günlük yemek menüsü</desc>
   <rect width="100%" height="100%" fill="#fdfdfd"/>
   <text x="16" y="24" font-size="20" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" fill="#d35400" font-weight="700">${escapeXml(today.title)} Menüsü</text>
-  <line x1="16" y1="30" x2="${contentWidth + 16}" y2="30" stroke="#eee" stroke-width="2"/>
+  <line x1="16" y1="34" x2="${contentWidth + 16}" y2="34" stroke="#eee" stroke-width="2"/>
   ${content}
 </svg>`;
 
