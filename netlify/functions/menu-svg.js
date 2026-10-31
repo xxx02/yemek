@@ -31,6 +31,22 @@ exports.handler = async function () {
     '2026-10-27': ['Yıldız Şehriyeli Domates Çorbası', 'Yayla Soslu Piliç', 'Kekikli Bulgur Pilavı'],
     '2026-10-28': ['Patates Graten', 'Burgu Makarna', 'Akdeniz Salata'],
     '2026-10-30': ['Mevsim Türlü', 'Mantı', 'Yoğurt'],
+    '2026-11-02': ["Süzme Mercimek Çorbası", "Soslu Tavuk Döner Lavaş", "Kaşık Patates", "Ayran"],
+    '2026-11-03': ["Közlenmiş Domates Çorbası", "Püreli Hasanpaşa Köfte", "Tel Şehriyeli Bulgur Pilavı", "Mevsim Meyve"],
+    '2026-11-04': ["Etli Düğün Çorba", "Kuru Fasulye", "Tavuklu Pilav", "Cacık"],
+    '2026-11-05': ["Tarhana Çorba", "Dana Bulgogi", "Penne Makarna", "Mevsim Yeşillikleri"],
+    '2026-11-06': ["Ezogelin Çorba", "Karnabahar Graten", "Arpa Şehriye Pilavı", "Supangle"],
+    '2026-11-09': ["Naneli Yoğurt Çorba", "Gemici Usulü Nohut", "Pirinç Pilav", "Cacık"],
+    '2026-11-10': ["Arpa Şehriye Çorba", "Dana Fajita", "Erişte", "Red Velvet"],
+    '2026-11-11': ["Domates Çorba", "Soya Soslu Piliç", "Lazanya", "Yoğurt"],
+    '2026-11-12': ["Saray Çorba", "Sebze Graten", "Naneli Bulgur Pilavı", "Vişne Komposto"],
+    '2026-11-13': ["Tavuk Suyu Çorba", "Kuru Köfte / Patates", "Şeh. Pilav", "Kış Salatası"],
+    '2026-11-23': ["Toyga Çorba", "Piliç Schnitzel", "Renkli Biberli Bulgur Pilavı", "Elma Komposto"],
+    '2026-11-24': ["Şeh. Tavuk Çorba", "Kaşarlı Köfte", "Spagetti", "Havuç Tarator"],
+    '2026-11-25': ["Etli Düğün Çorba", "Kuru Fasulye", "Şeh. Pirinç Pilavı", "Cacık"],
+    '2026-11-26': ["Ev Usulü Mercimek Çorba", "Hamburger", "Patates Kızartması / Soğan Halkası", "Browni"],
+    '2026-11-27': ["Tarhana Çorbası", "Mengen Musakka", "Mısırlı Pilav", "Mevsim Meyve"],
+    '2026-11-30': ["Ezogelin Çorba", "Etli Patates Yemeği", "Pey. Boncuk Makarna", "Mevsim Salata"],
   };
 
   function getDateInfo(now = new Date()) {
@@ -89,6 +105,7 @@ exports.handler = async function () {
 
   const today = getDateInfo();
   const menu = menus[today.key];
+  const isNovemberBreak = today.key >= '2026-11-16' && today.key <= '2026-11-20';
   const width = 360;
   const xBullet = 16;
   const xText = 30;
@@ -107,6 +124,10 @@ exports.handler = async function () {
       });
       y += lines.length * 18 + 10;
     }
+  } else if (isNovemberBreak) {
+    content += `<text x="16" y="60" font-size="18" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" fill="#d35400" font-weight="600">16–20 Kasım: Ara Tatil</text>`;
+    content += `<text x="16" y="86" font-size="16" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" fill="#7f8c8d">Yemek servisi bulunmamaktadır.</text>`;
+    y = 108;
   } else {
     content += `<text x="16" y="60" font-size="18" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" fill="#7f8c8d" font-style="italic">Bugün yemek servisi bulunmamaktadır.</text>`;
     y = 86;
