@@ -136,7 +136,7 @@
     <script>
         /*
          * Ali Öztaylan Anadolu İmam Hatip Lisesi
-         * Eylül–Ekim 2026 menü planı
+         * Eylül–Kasım 2026 menü planı
          *
          * Menü haftanın gününe göre değil, gerçek tarihe göre seçilir.
          * Böylece her pazartesi aynı yemeğin görünmesi gibi bir sorun oluşmaz.
@@ -305,6 +305,102 @@
                 "Mevsim Türlü",
                 "Mantı",
                 "Yoğurt"
+            ],
+            "2026-11-02": [
+                "Süzme Mercimek Çorbası",
+                "Soslu Tavuk Döner Lavaş",
+                "Kaşık Patates",
+                "Ayran"
+            ],
+            "2026-11-03": [
+                "Közlenmiş Domates Çorbası",
+                "Püreli Hasanpaşa Köfte",
+                "Tel Şehriyeli Bulgur Pilavı",
+                "Mevsim Meyve"
+            ],
+            "2026-11-04": [
+                "Etli Düğün Çorba",
+                "Kuru Fasulye",
+                "Tavuklu Pilav",
+                "Cacık"
+            ],
+            "2026-11-05": [
+                "Tarhana Çorba",
+                "Dana Bulgogi",
+                "Penne Makarna",
+                "Mevsim Yeşillikleri"
+            ],
+            "2026-11-06": [
+                "Ezogelin Çorba",
+                "Karnabahar Graten",
+                "Arpa Şehriye Pilavı",
+                "Supangle"
+            ],
+            "2026-11-09": [
+                "Naneli Yoğurt Çorba",
+                "Gemici Usulü Nohut",
+                "Pirinç Pilav",
+                "Cacık"
+            ],
+            "2026-11-10": [
+                "Arpa Şehriye Çorba",
+                "Dana Fajita",
+                "Erişte",
+                "Red Velvet"
+            ],
+            "2026-11-11": [
+                "Domates Çorba",
+                "Soya Soslu Piliç",
+                "Lazanya",
+                "Yoğurt"
+            ],
+            "2026-11-12": [
+                "Saray Çorba",
+                "Sebze Graten",
+                "Naneli Bulgur Pilavı",
+                "Vişne Komposto"
+            ],
+            "2026-11-13": [
+                "Tavuk Suyu Çorba",
+                "Kuru Köfte / Patates",
+                "Şeh. Pilav",
+                "Kış Salatası"
+            ],
+            "2026-11-23": [
+                "Toyga Çorba",
+                "Piliç Schnitzel",
+                "Renkli Biberli Bulgur Pilavı",
+                "Elma Komposto"
+            ],
+            "2026-11-24": [
+                "Şeh. Tavuk Çorba",
+                "Kaşarlı Köfte",
+                "Spagetti",
+                "Havuç Tarator"
+            ],
+            "2026-11-25": [
+                "Etli Düğün Çorba",
+                "Kuru Fasulye",
+                "Şeh. Pirinç Pilavı",
+                "Cacık"
+            ],
+            "2026-11-26": [
+                "Ev Usulü Mercimek Çorba",
+                "Hamburger",
+                "Patates Kızartması / Soğan Halkası",
+                "Browni"
+            ],
+            "2026-11-27": [
+                "Tarhana Çorbası",
+                "Mengen Musakka",
+                "Mısırlı Pilav",
+                "Mevsim Meyve"
+            ],
+            "2026-11-30": [
+                "Ezogelin Çorba",
+                "Etli Patates Yemeği",
+                "Pey. Boncuk Makarna",
+                "Mevsim Salata"
             ]
         };
 
@@ -356,14 +452,17 @@
             renderedDateKey = today.key;
 
             const dailyMenu = menus[today.key];
+            const isNovemberBreak = today.key >= "2026-11-16" && today.key <= "2026-11-20";
 
-            menuTitle.textContent = `${today.label} Menüsü`;
+            menuTitle.textContent = isNovemberBreak ? `${today.label} · Ara Tatil` : `${today.label} Menüsü`;
             menuList.replaceChildren();
 
             if (!dailyMenu) {
                 const empty = document.createElement("div");
                 empty.className = "no-menu";
-                empty.textContent = "Bugün yemek servisi bulunmamaktadır.";
+                empty.textContent = isNovemberBreak
+                    ? "16–20 Kasım ara tatili nedeniyle yemek servisi bulunmamaktadır."
+                    : "Bugün yemek servisi bulunmamaktadır.";
                 menuList.appendChild(empty);
             } else {
                 const fragment = document.createDocumentFragment();
